@@ -1,0 +1,51 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.5",
+  "body": [
+    {
+      "type": "Container",
+      "items": [
+        {
+          "type": "TextBlock",
+          "text": "Ventas del Día",
+          "weight": "Bolder",
+          "size": "Medium",
+          "wrap": true
+        },
+        {
+          "type": "TextBlock",
+          "text": "${totalSales}",
+          "size": "ExtraLarge",
+          "weight": "Bolder",
+          "color": "Good"
+        },
+        {
+          "type": "FactSet",
+          "facts": [
+            {
+              "title": "Transacciones:",
+              "value": "${transactionCount}"
+            },
+            {
+              "title": "Promedio:",
+              "value": "${averageTicket}"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.OpenUrl",
+      "title": "Ver Dashboard",
+      "url": "/dashboard"
+    },
+    {
+      "type": "Action.OpenUrl",
+      "title": "Nueva Venta",
+      "url": "/dashboard/pos"
+    }
+  ]
+}

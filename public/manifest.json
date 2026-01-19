@@ -1,0 +1,186 @@
+{
+  "$schema": "https://json.schemastore.org/web-manifest-combined.json",
+  "id": "/",
+  "lang": "es-MX",
+  "name": "System International - POS y Gestión de Negocios",
+  "short_name": "SystemIntl",
+  "description": "Suite digital inteligente — POS, menú digital, gestión de inventario, reportes de ventas y más para tu negocio",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["tabbed", "window-controls-overlay", "standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "dir": "auto",
+  "categories": ["business", "productivity", "finance"],
+  "iarc_rating_id": "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7",
+  "icons": [
+    {
+      "src": "/icons/si-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/si-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/si-icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Punto de Venta",
+      "short_name": "POS",
+      "description": "Abrir punto de venta",
+      "url": "/dashboard/pos",
+      "icons": [{ "src": "/icons/si-icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Menú Digital",
+      "short_name": "Menú",
+      "description": "Ver menú digital",
+      "url": "/dashboard/menu-digital",
+      "icons": [{ "src": "/icons/si-icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Reportes",
+      "short_name": "Reportes",
+      "description": "Ver reportes de ventas",
+      "url": "/dashboard/reports",
+      "icons": [{ "src": "/icons/si-icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Inventario",
+      "short_name": "Inventario",
+      "description": "Gestionar inventario",
+      "url": "/dashboard/inventory",
+      "icons": [{ "src": "/icons/si-icon-192.png", "sizes": "192x192" }]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/images/mobile-pos.png",
+      "sizes": "768x1408",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Dashboard POS en móvil"
+    },
+    {
+      "src": "/images/mobile-menu.png",
+      "sizes": "768x1408",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Menú digital en móvil"
+    },
+    {
+      "src": "/images/dashboard.png",
+      "sizes": "2560x1426",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Dashboard principal con vista de ventas y estadísticas"
+    },
+    {
+      "src": "/images/dashboard1.png",
+      "sizes": "2852x1488",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Panel de control con métricas del negocio"
+    }
+  ],
+  "file_handlers": [
+    {
+      "action": "/dashboard/inventory",
+      "accept": {
+        "text/csv": [".csv"],
+        "application/vnd.ms-excel": [".xls"],
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [".xlsx"]
+      },
+      "icons": [{ "src": "/icons/si-icon-192.png", "sizes": "192x192" }],
+      "launch_type": "single-client"
+    },
+    {
+      "action": "/dashboard/products",
+      "accept": {
+        "application/json": [".json"]
+      },
+      "icons": [{ "src": "/icons/si-icon-192.png", "sizes": "192x192" }],
+      "launch_type": "single-client"
+    }
+  ],
+  "protocol_handlers": [
+    { "protocol": "web+pos", "url": "/dashboard/pos?action=%s" },
+    { "protocol": "web+menu", "url": "/dashboard/menu-digital?item=%s" },
+    { "protocol": "web+order", "url": "/dashboard/orders?id=%s" }
+  ],
+  "share_target": {
+    "action": "/share-target",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url",
+      "files": [{ "name": "files", "accept": ["image/*", "text/csv", "application/json"] }]
+    }
+  },
+  "launch_handler": {
+    "client_mode": ["navigate-existing", "auto"]
+  },
+  "handle_links": "preferred",
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "note_taking": {
+    "new_note_url": "/dashboard/notes/new"
+  },
+  "scope_extensions": [
+    { "origin": "https://*.replit.app" },
+    { "origin": "https://*.replit.dev" },
+    { "origin": "https://accounts.clerk.dev" },
+    { "origin": "https://*.clerk.accounts.dev" }
+  ],
+  "widgets": [
+    {
+      "name": "Ventas del Día",
+      "short_name": "Ventas",
+      "description": "Resumen de ventas diarias en tiempo real",
+      "tag": "sales-widget",
+      "ms_ac_template": "/widgets/sales-widget.json",
+      "data": "/api/dashboard/orders",
+      "type": "application/json",
+      "screenshots": [{ "src": "/images/mobile-pos.png", "sizes": "768x1408" }],
+      "icons": [{ "src": "/icons/si-icon-192.png", "sizes": "192x192" }],
+      "backgrounds": [{ "src": "/images/dashboard.png", "sizes": "2560x1426" }]
+    }
+  ],
+  "related_applications": [
+    {
+      "platform": "windows",
+      "url": "https://apps.microsoft.com/store/detail/system-international-pos/9NBLGGH4NNS1",
+      "id": "SystemInternational.POS"
+    },
+    {
+      "platform": "play",
+      "url": "https://play.google.com/store/apps/details?id=com.systeminternational.pos",
+      "id": "com.systeminternational.pos"
+    },
+    {
+      "platform": "itunes",
+      "url": "https://apps.apple.com/app/system-international-pos/id1234567890",
+      "id": "1234567890"
+    },
+    {
+      "platform": "webapp",
+      "url": "https://system-international.replit.app"
+    }
+  ],
+  "prefer_related_applications": false
+}
