@@ -298,7 +298,12 @@ export default function MarcasBlancasPage() {
       const response = await fetch("/api/verticals");
       if (response.ok) {
         const data = await response.json();
-        setVerticals(data.data || []);
+        // Filter out verticals without valid display_name to prevent toLowerCase errors
+        const validVerticals = (data.data || []).filter((v: Vertical) => 
+          v && v.display_name && typeof v.display_name === 'string' && v.display_name.trim() !== ''
+        );
+        console.log(`[MarcasBlancas] Loaded ${validVerticals.length} valid verticals`);
+        setVerticals(validVerticals);
       }
     } catch (error) {
       console.error("Error fetching verticals:", error);
@@ -311,27 +316,40 @@ export default function MarcasBlancasPage() {
     fetchVerticals();
   }, []);
 
-  // Sync brands with verticals
+  // Sync brands with verticals - create 1 brand per vertical
+  const [syncStatus, setSyncStatus] = useState<string>("");
+  const [isSyncing, setIsSyncing] = useState(false);
+  
   useEffect(() => {
     const syncBrandsWithVerticals = async () => {
       // Evitar bucles y esperar a que los datos estén cargados
-      if (verticalsLoading || loading || verticals.length === 0) return;
+      if (verticalsLoading || loading || verticals.length === 0 || isSyncing) return;
       
-      const missingVerticals = verticals.filter(v => 
-        !brands.some(b => 
-          (b.businessType && v.name && b.businessType.toLowerCase() === v.name.toLowerCase()) || 
-          (b.name && v.display_name && b.name.toLowerCase() === v.display_name.toLowerCase())
-        )
-      );
+      // Find verticals that don't have a corresponding brand
+      const missingVerticals = verticals.filter(v => {
+        if (!v || !v.name || !v.display_name) return false;
+        
+        const vName = (v.name || "").toLowerCase();
+        const vDisplayName = (v.display_name || "").toLowerCase();
+        
+        return !brands.some(b => {
+          const bType = (b.businessType || "").toLowerCase();
+          const bName = (b.name || "").toLowerCase();
+          return bType === vName || bName === vDisplayName;
+        });
+      });
 
       if (missingVerticals.length > 0) {
-        console.log(`[MarcasBlancas] Sincronizando ${missingVerticals.length} marcas faltantes`);
+        setIsSyncing(true);
+        setSyncStatus(`Sincronizando ${missingVerticals.length} marcas...`);
+        console.log(`[MarcasBlancas] Sincronizando ${missingVerticals.length} marcas faltantes de ${verticals.length} verticales`);
         
+        let created = 0;
         for (const v of missingVerticals) {
           if (!v.display_name || !v.name) continue;
           
           try {
-            const subdomain = v.slug || v.name.toLowerCase().replace(/_/g, "-");
+            const subdomain = v.slug || (v.name || "").toLowerCase().replace(/_/g, "-").replace(/[^a-z0-9-]/g, "");
             const payload = {
               name: v.display_name,
               businessType: v.name,
@@ -350,18 +368,35 @@ export default function MarcasBlancasPage() {
             });
 
             if (res.ok) {
-              console.log(`[MarcasBlancas] Marca creada para: ${v.display_name}`);
+              created++;
+              console.log(`[MarcasBlancas] ✓ Marca creada para: ${v.display_name}`);
+            } else {
+              const error = await res.text();
+              console.warn(`[MarcasBlancas] ⚠ No se pudo crear marca para ${v.display_name}: ${error}`);
             }
           } catch (err) {
-            console.error(`[MarcasBlancas] Error de sincronización ${v.name}:`, err);
+            console.error(`[MarcasBlancas] ✗ Error de sincronización ${v.name}:`, err);
           }
         }
-        // Solo recargar marcas si hubo cambios
-        fetchBrands();
+        
+        setSyncStatus(`${created} marcas creadas`);
+        setIsSyncing(false);
+        
+        // Recargar marcas después de sincronizar
+        if (created > 0) {
+          setTimeout(() => {
+            fetchBrands();
+            setSyncStatus("");
+          }, 1000);
+        } else {
+          setSyncStatus("");
+        }
+      } else {
+        console.log(`[MarcasBlancas] ✓ Sincronizado: ${brands.length} marcas para ${verticals.length} verticales`);
       }
     };
 
-    if (brands.length >= 0 && verticals.length > 0) {
+    if (!loading && !verticalsLoading && verticals.length > 0) {
       syncBrandsWithVerticals();
     }
   }, [brands.length, verticals.length, loading, verticalsLoading]);
