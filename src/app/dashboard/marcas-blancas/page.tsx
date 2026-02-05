@@ -403,7 +403,7 @@ export default function MarcasBlancasPage() {
 
   // Check for Figma template when business type changes
   useEffect(() => {
-    const normalizedType = formData.businessType.trim().toLowerCase();
+    const normalizedType = (formData.businessType || "").trim().toLowerCase();
     const templateUrl = FIGMA_TEMPLATES[normalizedType];
     setSelectedFigmaTemplate(templateUrl || null);
   }, [formData.businessType]);
